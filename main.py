@@ -3,7 +3,7 @@ import tkinter
 import os
 from datetime import datetime
 
-INPUT_FILE = "29-07-2567.csv"
+INPUT_FILE = "test_case1.csv"
 
 def getTime_0800(my_date):
     return my_date.replace(hour=8, minute=0, second=0, microsecond=0)
@@ -23,12 +23,8 @@ def get_first_am(my_times):
     for my_time in my_times:
         res.append((my_time - t0800).total_seconds())
 
-    neg_near_zero = res[0]
-    idx = 0
-    for re in res:
-        if re < 0 and re < neg_near_zero:
-            neg_near_zero = re
-            idx += 1
+    print("LIST_AM_FIRST: " + str(res))
+    idx = min(range(len(res)), key=lambda i: abs(res[i] - 11.5))
 
     return my_times[idx]
 
@@ -165,17 +161,20 @@ if __name__ == "__main__":
         for c_day in correct_day:
             time_in = tts[emp]
 
+            for t in time_in[c_day]:
+                print("ttt: " + str(t))
+
             am_first = get_first_am(time_in[c_day])
-            # print(am_first)
+            print("AM_FIRST " + str(am_first))
 
             am_last = get_last_am(time_in[c_day])
-            # print(am_last)
+            print("AM_LAST " + str(am_last))
 
             pm_first = get_first_pm(time_in[c_day])
-            # print(pm_first)
+            print("PM_FIST " + str(pm_first))
 
             pm_last = get_last_pm(time_in[c_day])
-            print(pm_last)
+            print("PM_LAST " + str(pm_last))
 
         print(correct_day)
         exit()
