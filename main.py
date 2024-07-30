@@ -24,7 +24,10 @@ def get_first_am(my_times):
         res.append((my_time - t0800).total_seconds())
 
     print("LIST_AM_FIRST: " + str(res))
-    idx = min(range(len(res)), key=lambda i: abs(res[i] - 11.5))
+    idx = min(range(len(res)), key = lambda i: abs(res[i]-0))
+
+    if res[idx] > 0 and idx - 1 >= 0:
+        return my_times[idx - 1]
 
     return my_times[idx]
 
@@ -32,15 +35,10 @@ def get_last_am(my_times):
     t1200 = getTime_1200(my_times[0])
     res = list()
     for my_time in my_times:
-        res.append((my_time - t1200).total_seconds())
+        res.append((t1200 - my_time).total_seconds())
 
-    # print(res)
-    neg_near_zero = res[-1]
-    idx = 0
-    for re in res:
-        if re >= 0 and re < neg_near_zero:
-            neg_near_zero = re
-            idx += 1
+    print("LIST_AM_LAST: " + str(res))
+    idx = min(range(len(res)), key = lambda i: abs(res[i]-0))
 
     return my_times[idx]
 
@@ -50,13 +48,8 @@ def get_first_pm(my_times):
     for my_time in my_times:
         res.append((my_time -t1300).total_seconds())
 
-    # print(res)
-    neg_near_zero = res[0]
-    idx = 0
-    for re in res:
-        if re < 0 and re > neg_near_zero:
-            neg_near_zero = re
-            idx += 1
+    print("LIST_PM_FIRST: " + str(res))
+    idx = min(range(len(res)), key = lambda i: abs(res[i]-0))
 
     return my_times[idx]
 
@@ -66,13 +59,8 @@ def get_last_pm(my_times):
     for my_time in my_times:
         res.append((my_time -t1700).total_seconds())
 
-    print(res)
-    neg_near_zero = res[0]
-    idx = 0
-    for re in res:
-        if re > neg_near_zero:
-            neg_near_zero = re
-            idx += 1
+    print("LIST_PM_LAST: " + str(res))
+    idx = min(range(len(res)), key = lambda i: abs(res[i]-0))
 
     return my_times[idx]
 
@@ -164,16 +152,18 @@ if __name__ == "__main__":
             for t in time_in[c_day]:
                 print("ttt: " + str(t))
 
-            am_first = get_first_am(time_in[c_day])
+            tic = sorted(time_in[c_day])
+
+            am_first = get_first_am(tic)
             print("AM_FIRST " + str(am_first))
 
-            am_last = get_last_am(time_in[c_day])
+            am_last = get_last_am(tic)
             print("AM_LAST " + str(am_last))
 
-            pm_first = get_first_pm(time_in[c_day])
+            pm_first = get_first_pm(tic)
             print("PM_FIST " + str(pm_first))
 
-            pm_last = get_last_pm(time_in[c_day])
+            pm_last = get_last_pm(tic)
             print("PM_LAST " + str(pm_last))
 
         print(correct_day)
