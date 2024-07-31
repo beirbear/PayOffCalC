@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 
 INPUT_FILE = "test_case1.csv"
+WORKING_SECONDS = 28800
 
 def getTime_0800(my_date):
     return my_date.replace(hour=8, minute=0, second=0, microsecond=0)
@@ -16,6 +17,9 @@ def getTime_1300(my_date):
 
 def getTime_1700(my_date):
     return my_date.replace(hour=17, minute=0, second=0, microsecond=0)
+
+def myRound(x, base=5):
+    return base * round(x/base)
 
 def get_first_am(my_times):
     t0800 = getTime_0800(my_times[0])
@@ -31,7 +35,7 @@ def get_first_am(my_times):
 
     return my_times[idx]
 
-def get_last_am(my_times):
+def get_last_am(my_times, prior=0):
     t1200 = getTime_1200(my_times[0])
     res = list()
     for my_time in my_times:
@@ -40,7 +44,7 @@ def get_last_am(my_times):
     print("LIST_AM_LAST: " + str(res))
     idx = min(range(len(res)), key = lambda i: abs(res[i]-0))
 
-    return my_times[idx]
+    return my_times[idx-prior]
 
 def get_first_pm(my_times):
     t1300 = getTime_1300(my_times[0])
@@ -196,13 +200,45 @@ if __name__ == "__main__":
             else:
                 pm_stop = pm_last
 
+            # Ordinary Case
             working_hour = (am_stop - am_start) + (pm_stop - pm_start)
 
-            print("AM_START TIME " + str(am_start))
+            # Case ไม่มีต้องออก ตอกเข้ากลางวัน
+            if am_first == am_last and \
+                pm_first == pm_last:
+                print("OVERRIDE: No AM Clock Out and No PM Clock In")
+                working_hour = (pm_stop - am_start) - (T1300 - T1200)
+
+            # Case ออกก่อนเทียง
+            # print("AM_STOP: " + str(am_stop))
+            # print("AM_LAST: " + str(am_last))
+
+            elif am_last == pm_first and \
+                    pm_last > pm_first and \
+                    am_last < am_first:
+                print("OVERRIDE: AM Clock Out Before 1200")
+                am_stop = get_last_am(tic, prior=1)
+                working_hour = (am_stop - am_start) + (pm_stop - pm_start)
+
+            # Case ลาบ่าย
+            elif pm_stop <= pm_start:
+                print("OVERRIDE: No PM Clock In and Out")
+                working_hour = am_stop - am_start
+
+                print(am_stop - am_start)
+                print(working_hour.seconds/WORKING_SECONDS*350)
+
+            # Case ลาเช้า
+            elif am_first == am_last:
+                print("OVERRIDE: No AM Clock In and Out")
+                working_hour = pm_stop - pm_start
+
+            print("\nAM_START TIME " + str(am_start))
             print("AM_STOP TIME " + str(am_stop))
             print("PM_START TIME " + str(pm_start))
             print("PM_STOP TIME " + str(pm_stop))
-            print("Working for " + str(working_hour))
+            print("Working for " + str(working_hour.seconds) + " and received "
+                  + str(myRound(working_hour.seconds/WORKING_SECONDS*350)) + " baht.")
 
         print(correct_day)
         exit()
