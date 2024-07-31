@@ -166,5 +166,43 @@ if __name__ == "__main__":
             pm_last = get_last_pm(tic)
             print("PM_LAST " + str(pm_last))
 
+            # Calculate working hour
+            am_start = None
+            am_stop = None
+            pm_start = None
+            pm_stop = None
+
+            T0800 = getTime_0800(tic[0])
+            if am_first <= T0800:
+                am_start = T0800
+            else:
+                am_start = am_first
+
+            T1200 = getTime_1200(tic[0])
+            T1300 = getTime_1300(tic[0])
+            if am_last >= T1200 and am_last < T1300:
+                am_stop = T1200
+            else:
+                am_stop = am_last
+
+            if pm_first <= T1300:
+                pm_start = T1300
+            else:
+                pm_start = pm_first
+
+            T1700 = getTime_1700(tic[0])
+            if pm_last > T1700:
+                pm_stop = T1700
+            else:
+                pm_stop = pm_last
+
+            working_hour = (am_stop - am_start) + (pm_stop - pm_start)
+
+            print("AM_START TIME " + str(am_start))
+            print("AM_STOP TIME " + str(am_stop))
+            print("PM_START TIME " + str(pm_start))
+            print("PM_STOP TIME " + str(pm_stop))
+            print("Working for " + str(working_hour))
+
         print(correct_day)
         exit()
