@@ -224,6 +224,8 @@ if __name__ == "__main__":
             elif pm_stop <= pm_start:
                 print(str(c_day) + ": No PM Clock In and Out")
                 working_hour = am_stop - am_start
+                pm_start = T1200
+                pm_Stop = T1200
 
                 # print(am_stop - am_start)
                 # print(working_hour.seconds/WORKING_SECONDS*350)
@@ -238,9 +240,43 @@ if __name__ == "__main__":
             # print("PM_START TIME " + str(pm_start))
             # print("PM_STOP TIME " + str(pm_stop))
 
+
             wage = myRound(working_hour.seconds/WORKING_SECONDS*350)
-            msg = (str(c_day) + "," + str(am_start.time()) + "," + str(am_stop.time()) + "," +
-                   str(pm_start.time()) + "," + str(pm_stop.time()) + "," + str(wage))
+            txt_am_start = None
+            txt_am_stop = None
+            txt_pm_start = None
+            txt_pm_stop = None
+
+            if am_start == T0800:
+                txt_am_start = "มา"
+            elif am_start > T0800:
+                txt_am_start = str(am_start.time())
+            else:
+                txt_am_start = "ลา"
+
+            if am_stop == T1200:
+                txt_am_stop = "มา"
+            elif am_stop < T1200 and am_stop > T0800:
+                txt_am_stop = str(am_stop.time())
+            else:
+                txt_am_stop = "ลา"
+
+            if pm_start == T1300:
+                txt_pm_start = "มา"
+            elif pm_start > T1300:
+                txt_pm_start = str(pm_start.time())
+            else:
+                txt_pm_start = "ลา"
+
+            if pm_stop == T1700:
+                txt_pm_stop = "มา"
+            elif pm_stop < T1700 and pm_stop > T1300:
+                txt_pm_stop = str(pm_stop.time())
+            else:
+                txt_pm_stop = "ลา"
+
+            msg = (str(c_day) + "," + txt_am_start + "," + txt_am_stop + "," +
+                   txt_pm_start + "," + txt_pm_stop + "," + str(wage))
             print(msg)
 
         exit()
