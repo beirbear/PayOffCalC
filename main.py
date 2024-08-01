@@ -27,7 +27,7 @@ def get_first_am(my_times):
     for my_time in my_times:
         res.append((my_time - t0800).total_seconds())
 
-    print("LIST_AM_FIRST: " + str(res))
+    # print("LIST_AM_FIRST: " + str(res))
     idx = min(range(len(res)), key = lambda i: abs(res[i]-0))
 
     if res[idx] > 0 and idx - 1 >= 0:
@@ -41,7 +41,7 @@ def get_last_am(my_times, prior=0):
     for my_time in my_times:
         res.append((t1200 - my_time).total_seconds())
 
-    print("LIST_AM_LAST: " + str(res))
+    # print("LIST_AM_LAST: " + str(res))
     idx = min(range(len(res)), key = lambda i: abs(res[i]-0))
 
     return my_times[idx-prior]
@@ -52,7 +52,7 @@ def get_first_pm(my_times):
     for my_time in my_times:
         res.append((my_time -t1300).total_seconds())
 
-    print("LIST_PM_FIRST: " + str(res))
+    # print("LIST_PM_FIRST: " + str(res))
     idx = min(range(len(res)), key = lambda i: abs(res[i]-0))
 
     return my_times[idx]
@@ -63,7 +63,7 @@ def get_last_pm(my_times):
     for my_time in my_times:
         res.append((my_time -t1700).total_seconds())
 
-    print("LIST_PM_LAST: " + str(res))
+    # print("LIST_PM_LAST: " + str(res))
     idx = min(range(len(res)), key = lambda i: abs(res[i]-0))
 
     return my_times[idx]
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     if not os.path.isfile(INPUT_FILE):
         # Read input file
         msg = "Input file " + INPUT_FILE + " doesn't exist!"
-        tkinter.messagebox.showinfo(title=None, message=msg, **options)
+        print(msg)
         exit()
 
     # Structure { "id": "name" }
@@ -153,22 +153,22 @@ if __name__ == "__main__":
         for c_day in correct_day:
             time_in = tts[emp]
 
-            for t in time_in[c_day]:
-                print("ttt: " + str(t))
+            # for t in time_in[c_day]:
+            #     print("ttt: " + str(t))
 
             tic = sorted(time_in[c_day])
 
             am_first = get_first_am(tic)
-            print("AM_FIRST " + str(am_first))
+            # print("AM_FIRST " + str(am_first))
 
             am_last = get_last_am(tic)
-            print("AM_LAST " + str(am_last))
+            # print("AM_LAST " + str(am_last))
 
             pm_first = get_first_pm(tic)
-            print("PM_FIST " + str(pm_first))
+            # print("PM_FIST " + str(pm_first))
 
             pm_last = get_last_pm(tic)
-            print("PM_LAST " + str(pm_last))
+            # print("PM_LAST " + str(pm_last))
 
             # Calculate working hour
             am_start = None
@@ -206,7 +206,7 @@ if __name__ == "__main__":
             # Case ไม่มีต้องออก ตอกเข้ากลางวัน
             if am_first == am_last and \
                 pm_first == pm_last:
-                print("OVERRIDE: No AM Clock Out and No PM Clock In")
+                print(str(c_day) + ": No AM Clock Out and No PM Clock In")
                 working_hour = (pm_stop - am_start) - (T1300 - T1200)
 
             # Case ออกก่อนเทียง
@@ -216,29 +216,31 @@ if __name__ == "__main__":
             elif am_last == pm_first and \
                     pm_last > pm_first and \
                     am_last < am_first:
-                print("OVERRIDE: AM Clock Out Before 1200")
+                print(str(c_day) + ": AM Clock Out Before 1200")
                 am_stop = get_last_am(tic, prior=1)
                 working_hour = (am_stop - am_start) + (pm_stop - pm_start)
 
             # Case ลาบ่าย
             elif pm_stop <= pm_start:
-                print("OVERRIDE: No PM Clock In and Out")
+                print(str(c_day) + ": No PM Clock In and Out")
                 working_hour = am_stop - am_start
 
-                print(am_stop - am_start)
-                print(working_hour.seconds/WORKING_SECONDS*350)
+                # print(am_stop - am_start)
+                # print(working_hour.seconds/WORKING_SECONDS*350)
 
             # Case ลาเช้า
             elif am_first == am_last:
-                print("OVERRIDE: No AM Clock In and Out")
+                print(str(c_day) + ": No AM Clock In and Out")
                 working_hour = pm_stop - pm_start
 
-            print("\nAM_START TIME " + str(am_start))
-            print("AM_STOP TIME " + str(am_stop))
-            print("PM_START TIME " + str(pm_start))
-            print("PM_STOP TIME " + str(pm_stop))
-            print("Working for " + str(working_hour.seconds) + " and received "
-                  + str(myRound(working_hour.seconds/WORKING_SECONDS*350)) + " baht.")
+            # print("\nAM_START TIME " + str(am_start))
+            # print("AM_STOP TIME " + str(am_stop))
+            # print("PM_START TIME " + str(pm_start))
+            # print("PM_STOP TIME " + str(pm_stop))
 
-        print(correct_day)
+            wage = myRound(working_hour.seconds/WORKING_SECONDS*350)
+            msg = (str(c_day) + "," + str(am_start.time()) + "," + str(am_stop.time()) + "," +
+                   str(pm_start.time()) + "," + str(pm_stop.time()) + "," + str(wage))
+            print(msg)
+
         exit()
