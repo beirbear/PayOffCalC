@@ -9,11 +9,18 @@ WORKING_SECONDS = 28800
 def getTime_0800(my_date):
     return my_date.replace(hour=8, minute=0, second=0, microsecond=0)
 
+def getTime_0820(my_date):
+    return my_date.replace(hour=8, minute=20, second=0, microsecond=0)
+
 def getTime_1200(my_date):
     return my_date.replace(hour=12, minute=0, second=0, microsecond=0)
 
 def getTime_1300(my_date):
     return my_date.replace(hour=13, minute=0, second=0, microsecond=0)
+
+def getTime_1320(my_date):
+    return my_date.replace(hour=13, minute=20, second=0, microsecond=0)
+
 
 def getTime_1700(my_date):
     return my_date.replace(hour=17, minute=0, second=0, microsecond=0)
@@ -119,6 +126,9 @@ if __name__ == "__main__":
 
     print("There are total " + str(len(tts.keys())) + " employees in total.")
 
+    total_wage = 0
+    penalty_am = 0
+    penalty_pm = 0
     # then, loop through every employee
     for emp in tts.keys():
 
@@ -206,8 +216,13 @@ if __name__ == "__main__":
             # Case ไม่มีต้องออก ตอกเข้ากลางวัน
             if am_first == am_last and \
                 pm_first == pm_last:
-                print(str(c_day) + ": No AM Clock Out and No PM Clock In")
-                working_hour = (pm_stop - am_start) - (T1300 - T1200)
+
+                if am_last == pm_last:
+                    print(str(c_day) + ": No AM Clock Out and No PM Clock In")
+                    continue
+                else:
+                    print(str(c_day) + ": No AM Clock Out and No PM Clock In and Out")
+                    working_hour = (pm_stop - am_start) - (T1300 - T1200)
 
             # Case ออกก่อนเทียง
             # print("AM_STOP: " + str(am_stop))
@@ -240,8 +255,13 @@ if __name__ == "__main__":
             # print("PM_START TIME " + str(pm_start))
             # print("PM_STOP TIME " + str(pm_stop))
 
+            # Penalty
+            p_am = T0800 - am_first
+            if p_am > 0 and p_am < 20:
+                print("sd")
 
             wage = myRound(working_hour.seconds/WORKING_SECONDS*350)
+            total_wage += wage
             txt_am_start = None
             txt_am_stop = None
             txt_pm_start = None
@@ -279,4 +299,5 @@ if __name__ == "__main__":
                    txt_pm_start + "," + txt_pm_stop + "," + str(wage))
             print(msg)
 
+        print("Total wage: " + str(total_wage))
         exit()
